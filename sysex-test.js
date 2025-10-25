@@ -189,64 +189,42 @@ function ccEvent(channel, number, value)
 	script.log("ControlChange received "+channel+", "+number+", "+value);
 
 	var lookupData = lookup(channel, number);
-	script.log("lookup ", lookupData);
 
-
-
-	// var bool = channel === 11 && number === 3;
 	var bool = channel == 11 && number == 3;
 
 	if (lookupData) {
 		var ga = myKitParam.get();
 
-		var vv = value * 255;
-		script.log("vv", vv);
-		var xx = vv / 127;
-		script.log("xx", xx);
-		// var qq = xx >> 4;
-		// var yy = xx & 15;
+		var scaledValue = value * 255 / 127;
 
-		var qq = Math.floor(xx / 16);  // upper nibble
-		var yy = Math.floor(xx) % 16;  // lower nibble
+		var upperNibble = Math.floor(scaledValue / 16);
+		var lowerNibble = Math.floor(scaledValue) % 16;
 
 		if (lookupData.single) {
 			script.log("its single");
-			qq = value;
-			yy = 0;
+			upperNibble = value;
+			lowerNibble = 0;
 		}
 
 		// Roland checksum calculation
-		vv = ((lookupData.type + ga + lookupData.lower + lookupData.upper + qq) + yy) % 128;
-		vv = (128 - vv) % 128;
+		var initialChecksum = ((lookupData.type + ga + lookupData.lower + lookupData.upper + upperNibble) + lowerNibble) % 128;
+		var checksum = (128 - initialChecksum) % 128;
 
 		if (!lookupData.single) {
-			script.log("not single sysex");
-
+			script.log("DOUBLE sysex");
 			local.sendSysex(
 				0xF0, 0x41, 0x10, 0x00, 0x00, 0x00, 0x6D, 0x12,
-				lookupData.type, ga, lookupData.lower, lookupData.upper, qq, yy, vv, 0xF7
+				lookupData.type, ga, lookupData.lower, lookupData.upper, upperNibble, lowerNibble, checksum, 0xF7
 			);
 		} else {
-			script.log("its single sysex");
-
+			script.log("SINGLE sysex");
 			local.sendSysex(
 				0xF0, 0x41, 0x10, 0x00, 0x00, 0x00, 0x6D, 0x12,
-				lookupData.type, ga, lookupData.lower, lookupData.upper, qq, vv, 0xF7
+				lookupData.type, ga, lookupData.lower, lookupData.upper, upperNibble, vv, 0xF7
 			);
 		}
-		
-
-
-
 	}
 }
-
- 
-// function ccEvent(channel, number, value)
-// { 
-// 	script.log("ControlChange received "+channel+", "+number+", "+value);
-// }
-
 
 function sysExEvent(data)
 {
