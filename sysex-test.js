@@ -236,6 +236,29 @@ function ccEvent(channel, number, value)
 				0xF0, 0x41, 0x10, 0x00, 0x00, 0x00, 0x6D, 0x12,
 				lookupData.category, ga, lookupData.lower, lookupData.upper, upperNibble, checksum, 0xF7
 			);
+		} else if (lookupData.type == 'sample') {
+			script.log("SAMPLE sysex");
+			// "110": { category: 0x45, lower: 5, upper: 1, type:'sample' }, // Sample Start
+			// F0 41 10 00 00 00 6D 12 45 27 00 18 00 00 00 00 00 00 00 0A 72 F7
+			/*
+			kit 01 instrument OH 44 is sample number? 70 and 18 is start time
+			F0 41 10 00 00 00 6D 12 44 70 00 18 00 00 00 00 00 00 00 00 34 F7
+
+			for sample end: 44 is sample number, 75 and 20
+			highest end:
+			F0 41 10 00 00 00 6D 12 44 75 00 20 00 00 00 04 00 09 06 05 0F F7
+			lowest end (10)
+			F0 41 10 00 00 00 6D 12 44 75 00 20 00 00 00 00 00 00 00 0A 1D F7
+			*/
+			var sampleNumber = 0x44;
+			var firstSampleIdentifier = 0x70;
+			var secondSampleIdentifier = 0x18;
+			var initialSampleStartChecksum = ((sampleNumber + firstSampleIdentifier + secondSampleIdentifier + lookupData.upper + upperNibble) + lowerNibble) % 128;
+			var sampleStartChecksum = (128 - initialSampleStartChecksum) % 128;
+			local.sendSysex(
+				0xF0, 0x41, 0x10, 0x00, 0x00, 0x00, 0x6D, 0x12,
+				sampleNumber, firstSampleIdentifier, 0, secondSampleIdentifier, 0,0,0,0,0,0, upperNibble, lowerNibble, sampleStartChecksum, 0xF7
+			);
 		}
 	} else {
 		var ga = myKitParam.get();
