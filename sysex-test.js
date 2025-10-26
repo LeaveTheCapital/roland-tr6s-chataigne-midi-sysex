@@ -170,14 +170,21 @@ function noteOffEvent(channel, pitch, velocity)
 function lookup(channel, number) {
 	var numTable = {
 		"11": {
-			// Reverb Time
-			"3": { type: 16, lower: 1, upper: 1 },
-			// Delay Reverb Send
-			"7": { type: 16, lower: 2, upper: 0x1C },
-			// Delay Type
-			"8": { type: 16, lower: 2, upper: 0, single: true },
-			// Reverb Type
-			"1": { type: 16, lower: 1, upper: 0, single: true },
+			"1": { type: 16, lower: 1, upper: 0, single: true }, // Reverb Type
+			"3": { type: 16, lower: 1, upper: 1 }, // Reverb Time
+			"4": { type: 16, lower: 1, upper: 5, single: true }, // Reverb Pre Delay
+			"5": { type: 16, lower: 1, upper: 6, single: true }, // Reverb Lo Cut
+			"6": { type: 16, lower: 1, upper: 7, single: true }, // Reverb Hi Cut
+			"7": { type: 16, lower: 2, upper: 0x1C }, // Delay Reverb Send
+			"8": { type: 16, lower: 2, upper: 0, single: true }, // Delay Type
+			"22": { type: 16, lower: 3, upper: 0x29 }, // MFX Phaser Rate
+			"23": { type: 16, lower: 3, upper: 0x31 }, // MFX Phaser Type / Flanger LoCut F0 41 10 00 00 00 6D 12 10 ga 03 31 00 pp xx F7 check this one
+			"24": { type: 16, lower: 3, upper: 0x2D }, // MFX Phaser Resonance
+			"25": { type: 16, lower: 3, upper: 0x2F }, // MFX Phaser Manual
+			"26": { type: 16, lower: 3, upper: 0x27 }, // MFX Phaser Balance
+			"27": { type: 16, lower: 3, upper: 0x2B }, // MFX Phaser Depth
+			"126": { type: 16, lower: 3, upper: 0x33 }, // MFX Flanger Mode F0 41 10 00 00 00 6D 12 10 ga 03 33 00 pp xx F7 check this one
+			"127": { type: 16, lower: 3, upper: 0x2D }, // MFX SBF Type F0 41 10 00 00 00 6D 12 10 ga 03 2D 00 pp xx F7 check this one
 		}
 	};
 	
@@ -189,8 +196,6 @@ function ccEvent(channel, number, value)
 	script.log("ControlChange received "+channel+", "+number+", "+value);
 
 	var lookupData = lookup(channel, number);
-
-	var bool = channel == 11 && number == 3;
 
 	if (lookupData) {
 		var ga = myKitParam.get();
@@ -222,6 +227,12 @@ function ccEvent(channel, number, value)
 				0xF0, 0x41, 0x10, 0x00, 0x00, 0x00, 0x6D, 0x12,
 				lookupData.type, ga, lookupData.lower, lookupData.upper, upperNibble, vv, 0xF7
 			);
+		}
+	} else {
+		var phaserChecksum = (128 - ((ga + 21) % 128)) % 128;
+		if (channel == 11 && number == 125 && value == 0) {
+			script.log("SWITCH to phaser");
+			local.sendSysex(0xF0,0x41,0x10,0x00,0x00,0x00,0x6D,0x12,0x10,ga,0x03,0x00,0x06,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x0A,0x0A,0x08,0x00,0x08,0x00,0x0E,0x06,0x08,0x00,0x00,0x02,0x00,0x01,0x00,0x01,0x0D,0x06,0x0D,0x06,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,phaserChecksum,0xF7);
 		}
 	}
 }
