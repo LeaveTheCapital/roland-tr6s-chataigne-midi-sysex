@@ -185,9 +185,9 @@ function lookup(channel, number) {
 			"25": { category: 16, lower: 3, upper: 0x2F, type:'double' }, // MFX Phaser Manual
 			"26": { category: 16, lower: 3, upper: 0x27, type:'double' }, // MFX Phaser Balance
 			"27": { category: 16, lower: 3, upper: 0x2B, type:'double' }, // MFX Phaser Depth
-			"29?": { category: 16, lower: 5, upper: 0, single: true }, // Kit LFO Waveform
+			"29": { category: 16, lower: 5, upper: 0, single: true }, // Kit LFO Waveform
 			"30": { category: 16, lower: 5, upper: 1, type:'double' }, // Kit LFO Rate
-			"31?": { category: 16, lower: 5, upper: 3, single: true }, // Kit LFO Sync
+			"31": { category: 16, lower: 5, upper: 3, single: true }, // Kit LFO Sync
 
 			"126": { category: 16, lower: 3, upper: 0x33, extraZero: true }, // MFX Flanger Mode F0 41 10 00 00 00 6D 12 10 ga 03 33 00 pp xx F7 check this one
 			"127": { category: 16, lower: 3, upper: 0x2D, extraZero: true }, // MFX SBF Type F0 41 10 00 00 00 6D 12 10 ga 03 2D 00 pp xx F7 check this one
@@ -197,22 +197,22 @@ function lookup(channel, number) {
 		"12": {
 			"3": { category: 16, lower: 0x12, upper: 0x35, type:'double' }, // LT FM Depth
 			"5": { category: 16, lower: 0x12, upper: 0x39, type:'double' }, // LT FM Decay
-			"12": { category: 16, lower: 0x12, upper: 0x47, type:'double' }, // LT FM Note
+			"7": { category: 16, lower: 0x12, upper: 0x3B, type:'double' }, // LT Feedback
 			"9": { category: 16, lower: 0x12, upper: 0x49, type:'double' }, // LT Pitch Env
 			"10": { category: 16, lower: 0x12, upper: 0x4B, type:'double' }, // LT Pitch Attack
 			"11": { category: 16, lower: 0x12, upper: 0x4D, type:'double' }, // LT Pitch Decay
-			"7": { category: 16, lower: 0x12, upper: 0x3B, type:'double' }, // LT Feedback
+			"12": { category: 16, lower: 0x12, upper: 0x47, type:'double' }, // LT FM Note
 			"13": { category: 16, lower: 0x12, upper: 0x3F, type:'double' }, // LT Color
 			
-			"??": { category: 16, lower: 0x12, upper: 0x0C, type:'double' }, // LT Pan
-			"??": { category: 16, lower: 0x12, upper: 0x13, single: true }, // LT LFO Dest
-			"??": { category: 16, lower: 0x12, upper: 0x14, type:'double' }, // LT LFO Depth
-			"??": { category: 16, lower: 0x12, upper: 0x0E, type:'double' }, // LT Reverb Send
-			"??": { category: 16, lower: 0x12, upper: 0x10, type:'double' }, // LT Delay
-			"??": { category: 16, lower: 0x12, upper: 0x00, type:'quadruple' }, // LT Instrument
+			"20": { category: 16, lower: 0x12, upper: 0x0C, type:'double' }, // LT Pan
+			"21": { category: 16, lower: 0x12, upper: 0x13, single: true }, // LT LFO Dest
+			"22": { category: 16, lower: 0x12, upper: 0x14, type:'double' }, // LT LFO Depth
+			"23": { category: 16, lower: 0x12, upper: 0x0E, type:'double' }, // LT Reverb Send
+			"24": { category: 16, lower: 0x12, upper: 0x10, type:'double' }, // LT Delay
+			"25": { category: 16, lower: 0x12, upper: 0x00, type:'quadruple' }, // LT Instrument
 			
-			"??": { category: 16, lower: 0x22, upper: 0x00, single: true }, // LT Inst Fx (always sends full report)
-			"??": { category: 16, lower: 0x22, upper: 0x09, type:'double' }, // LT Inst Fx Parameter 1
+			"26": { category: 16, lower: 0x22, upper: 0x00, single: true }, // LT Inst Fx (always sends full report)
+			"27": { category: 16, lower: 0x22, upper: 0x09, type:'double' }, // LT Inst Fx Parameter 1
 
 		}
 		// patern scatter type 2x xx 00 5C 1byte
@@ -252,6 +252,13 @@ function ccEvent(channel, number, value)
 				0xF0, 0x41, 0x10, 0x00, 0x00, 0x00, 0x6D, 0x12,
 				lookupData.category, ga, lookupData.lower, lookupData.upper, upperNibble, lowerNibble, checksum, 0xF7
 			);
+		} else if (lookupData.type == 'quadruple') {
+			script.log("QUADRUPLE sysex");
+			local.sendSysex(
+				0xF0, 0x41, 0x10, 0x00, 0x00, 0x00, 0x6D, 0x12,
+				lookupData.category, ga, lookupData.lower, lookupData.upper, 0, 0, upperNibble, lowerNibble, checksum, 0xF7
+
+			);
 		} else if (lookupData.extraZero) {
 			script.log("EXTRA ZERO sysex");
 			local.sendSysex(
@@ -285,7 +292,7 @@ function ccEvent(channel, number, value)
 			var sampleStartChecksum = (128 - initialSampleStartChecksum) % 128;
 			local.sendSysex(
 				0xF0, 0x41, 0x10, 0x00, 0x00, 0x00, 0x6D, 0x12,
-				sampleNumber, firstSampleIdentifier, 0, secondSampleIdentifier, 0,0,0,0,0,0, upperNibble, lowerNibble, sampleStartChecksum, 0xF7
+				sampleNumber, firstSampleIdentifier, 0, secondSampleIdentifier, 0,0,0,0,0,0, upperNibble, lowerNibble, sampleStartChecksum + 1, 0xF7
 			);
 		}
 	} else {
