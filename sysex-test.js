@@ -210,9 +210,53 @@ function lookup(channel, number) {
 			"23": { category: 16, lower: 0x12, upper: 0x0E, type:'double' }, // LT Reverb Send
 			"24": { category: 16, lower: 0x12, upper: 0x10, type:'double' }, // LT Delay
 			"25": { category: 16, lower: 0x12, upper: 0x00, type:'quadruple' }, // LT Instrument
-			
 			"26": { category: 16, lower: 0x22, upper: 0x00, single: true }, // LT Inst Fx (always sends full report)
 			"27": { category: 16, lower: 0x22, upper: 0x09, type:'double' }, // LT Inst Fx Parameter 1
+			
+			"30": { category: 16, lower: 0x10, upper: 0x0C, type:'double' }, // BD Pan
+			"31": { category: 16, lower: 0x10, upper: 0x13, single: true }, // BD LFO Dest
+			"32": { category: 16, lower: 0x10, upper: 0x14, type:'double' }, // BD LFO Depth
+			"33": { category: 16, lower: 0x10, upper: 0x0E, type:'double' }, // BD Reverb Send
+			"34": { category: 16, lower: 0x10, upper: 0x10, type:'double' }, // BD Delay
+			"35": { category: 16, lower: 0x10, upper: 0x00, type:'quadruple' }, // BD Instrument
+			"36": { category: 16, lower: 0x20, upper: 0x00, single: true }, // BD Inst Fx (always sends full report)
+			"37": { category: 16, lower: 0x20, upper: 0x09, type:'double' }, // BD Inst Fx Parameter 1
+			
+			"40": { category: 16, lower: 0x11, upper: 0x0C, type:'double' }, // SD Pan
+			"41": { category: 16, lower: 0x11, upper: 0x13, single: true }, // SD LFO Dest
+			"42": { category: 16, lower: 0x11, upper: 0x14, type:'double' }, // SD LFO Depth
+			"43": { category: 16, lower: 0x11, upper: 0x0E, type:'double' }, // SD Reverb Send
+			"44": { category: 16, lower: 0x11, upper: 0x10, type:'double' }, // SD Delay
+			"45": { category: 16, lower: 0x11, upper: 0x00, type:'quadruple' }, // SD Instrument
+			"46": { category: 16, lower: 0x21, upper: 0x00, single: true }, // SD Inst Fx (always sends full report)
+			"47": { category: 16, lower: 0x21, upper: 0x09, type:'double' }, // SD Inst Fx Parameter 1
+			
+			"50": { category: 16, lower: 0x13, upper: 0x0C, type:'double' }, // HC Pan
+			"51": { category: 16, lower: 0x13, upper: 0x13, single: true }, // HC LFO Dest
+			"52": { category: 16, lower: 0x13, upper: 0x14, type:'double' }, // HC LFO Depth
+			"53": { category: 16, lower: 0x13, upper: 0x0E, type:'double' }, // HC Reverb Send
+			"54": { category: 16, lower: 0x13, upper: 0x10, type:'double' }, // HC Delay
+			"55": { category: 16, lower: 0x13, upper: 0x00, type:'quadruple' }, // HC Instrument
+			"56": { category: 16, lower: 0x23, upper: 0x00, single: true }, // HC Inst Fx (always sends full report)
+			"57": { category: 16, lower: 0x23, upper: 0x09, type:'double' }, // HC Inst Fx Parameter 1
+
+			"60": { category: 16, lower: 0x14, upper: 0x0C, type:'double' }, // CH Pan
+			"61": { category: 16, lower: 0x14, upper: 0x13, single: true }, // CH LFO Dest
+			"62": { category: 16, lower: 0x14, upper: 0x14, type:'double' }, // CH LFO Depth
+			"63": { category: 16, lower: 0x14, upper: 0x0E, type:'double' }, // CH Reverb Send
+			"64": { category: 16, lower: 0x14, upper: 0x10, type:'double' }, // CH Delay
+			"65": { category: 16, lower: 0x14, upper: 0x00, type:'quadruple' }, // CH Instrument
+			"66": { category: 16, lower: 0x24, upper: 0x00, single: true }, // CH Inst Fx (always sends full report)
+			"67": { category: 16, lower: 0x24, upper: 0x09, type:'double' }, // CH Inst Fx Parameter 1
+			
+			"70": { category: 16, lower: 0x15, upper: 0x0C, type:'double' }, // OH Pan
+			"71": { category: 16, lower: 0x15, upper: 0x13, single: true }, // OH LFO Dest
+			"72": { category: 16, lower: 0x15, upper: 0x14, type:'double' }, // OH LFO Depth
+			"73": { category: 16, lower: 0x15, upper: 0x0E, type:'double' }, // OH Reverb Send
+			"74": { category: 16, lower: 0x15, upper: 0x10, type:'double' }, // OH Delay
+			"75": { category: 16, lower: 0x15, upper: 0x00, type:'quadruple' }, // OH Instrument
+			"76": { category: 16, lower: 0x25, upper: 0x00, single: true }, // OH Inst Fx (always sends full report)
+			"77": { category: 16, lower: 0x25, upper: 0x09, type:'double' }, // OH Inst Fx Parameter 1
 
 		}
 		// patern scatter type 2x xx 00 5C 1byte
